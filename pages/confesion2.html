@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+    <body class="pagina-confesion-fondo2"></body>
+    <h1 id="holy">¡Bienvenidos, hermanos!</h1>
+    <div class="caja2">
+    
+        <p id="holy1">Buenos días, hermanos. Me llamo Magdalena y todos los días me despierto con Dios en mi corazón. Siempre que me levanto de la cama me dedico a orar, es mi deber como su hija y como pecadora, siento que, al hablar con él, mi corazón se llena de gozo y júbilo y que el pecado que siento arder en mi carne se aleja de mi espíritu.</p>
+
+<p id="holy1">Aquel solo es uno de mis momentos cercanos con el padre santo, y como soy consciente del pecado que yace dentro de todos nosotros, intento inculcar en mi querido hijo las enseñanzas de una vida cercana a Dios y a su hermosa palabra. Lastimosamente, él siempre se aleja de su preciosa magnificencia. Mi querido Jacobo no lo nota, pero el pecado echa raíz en su alma cada día y eso lo va a terminar sumiendo en la maldad y labrando su camino hacia el averno, a ese terrible lugar donde van los sucios pecadores como el...</p>
+
+<p id="holy1">Hermanos, por favor. No seáis como mí querido, pero descarriado hijo. Acercaros a nuestro padre celestial. Abandonad el pecado que consume la esencia divina de la que nos dotó el creados. Sed como yo, confesad vuestros pecados a nuestro amado padre y limpiad el espíritu:
+</p>
+    </div>
+    
+        <textarea id="confesion2" maxlength="350" placeholder="Escriba aquí su confesión..."></textarea>
+        <div id="contador2">0/350</div>
+    
+        <div id="mensaje-error"></div>
+<p id="disclaimer2">*Confiese lo que quiera, su confesión será completamente anónima.</p>
+        <button id="enviar2">CONFESAR</button>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+const SUPABASE_URL = "https://qrdzhnfftjhjtaqgcyye.supabase.co";
+    const SUPABASE_KEY = "sb_publishable_ZtauYmqtEo7HUv6sA5OqFQ_GECv9AR5";
+
+    const supabaseClient = supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_KEY
+    );
+    const confesion = document.getElementById("confesion");
+    const contador = document.getElementById("contador");
+    console.log("Supabase conectado:", supabaseClient);
+
+   confesion.addEventListener("input", function() {
+    const caracteres = confesion.value.length;
+
+    if (caracteres >= 350) {
+    contador.textContent = "350 / 350 — NO AÑADA MÁS";
+} else if (caracteres >= 335) {
+    contador.textContent = caracteres + " / 350 — DETÉNGASE";
+} else if (caracteres >= 290) {
+    contador.textContent = caracteres + " / 350 — SU CONFESIÓN ES DEMASIADO LARGA";
+} else {
+    contador.textContent = caracteres + " / 350 CARACTERES";
+}
+
+    contador.classList.remove("advertencia", "peligro");
+
+    if (caracteres >= 335) {
+        contador.classList.add("peligro");
+    } else if (caracteres >= 290) {
+        contador.classList.add("advertencia");
+    }
+});
+
+const enviar2 = document.getElementById("enviar2");
+const mensajeError = document.getElementById("mensaje-error");
+
+enviar2.addEventListener("click", async function() {
+    const texto = confesion.value.trim();
+    const caracteres = texto.length;
+
+    if (caracteres < 10) {
+        mensajeError.textContent = "Quien oculta su actuar ante Dios, no tendrá lugar en la tierra prometida. —Salomón 4:15";
+        return;
+    }
+
+    mensajeError.textContent = "Procesando su confesión...";
+
+    const { error } = await supabaseClient
+        .from("confesiones")
+        .insert({
+            contenido: texto
+        });
+
+    if (error) {
+        console.error("Error al enviar la confesión:", error);
+        mensajeError.textContent = "Su confesión no pudo ser recibida. Inténtelo nuevamente.";
+        return;
+    }
+
+    window.location.href = "confesionrecibida2.html";
+});
+</script>
+</body>
+</html>
