@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+    <body class="pagina-confesion-fondo"></body>
+    <h1>¡Bienvenidos, hermanos!</h1>
+    <div class="caja">
+    
+        <p>Soy Jacobo, me gusta muchísimo la farra y el trago, me encanta parce. Es muy chimba y realmente puedo dejarlo cuando quiera, aunque en este momento no quiero. Salgo seguido de rumba y cuando lo hago me gusta empezar entonandome con unos aguardienticos en la casa, después voy y me tomo unas polas en la tienda de la esquina de donde vivo. En ese momento arranco para el farreadero mas cercano a esa tienda. Cuando llego allí, me tomo hasta lo que no hay, bailo y me aloco.</p>
+
+<p>Cuando salgo, o me echan porque no me aguantaron el voltaje, me voy para la casa. Allí, me pongo a contar todas las locuras que hice. ¿A quién? La verdad no estoy muy seguro. Es un man con el que me pongo a jartar mientras le cuento, pero cuando me despierto en la misma mesa donde me quede dormido, ya no esta.</p>
+
+<p>Parce, estoy seguro de que usted hace cosas más locas que yo. Cuénteme sus pecados aquí:</p>
+    </div>
+    
+        <textarea id="confesion" maxlength="350" placeholder="Escriba aquí su confesión..."></textarea>
+        <div id="contador">0/350</div>
+    
+        <div id="mensaje-error"></div>
+<p id="disclaimer">*Confiese lo que quiera, su confesión será completamente anónima.</p>
+        <button id="enviar">CONFESAR</button>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+const SUPABASE_URL = "https://qrdzhnfftjhjtaqgcyye.supabase.co";
+    const SUPABASE_KEY = "sb_publishable_ZtauYmqtEo7HUv6sA5OqFQ_GECv9AR5";
+
+    const supabaseClient = supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_KEY
+    );
+    const confesion = document.getElementById("confesion");
+    const contador = document.getElementById("contador");
+    console.log("Supabase conectado:", supabaseClient);
+
+   confesion.addEventListener("input", function() {
+    const caracteres = confesion.value.length;
+
+    if (caracteres >= 350) {
+    contador.textContent = "350 / 350 — NO AÑADA MÁS";
+} else if (caracteres >= 335) {
+    contador.textContent = caracteres + " / 350 — DETÉNGASE";
+} else if (caracteres >= 290) {
+    contador.textContent = caracteres + " / 350 — SU CONFESIÓN ES DEMASIADO LARGA";
+} else {
+    contador.textContent = caracteres + " / 350 CARACTERES";
+}
+
+    contador.classList.remove("advertencia", "peligro");
+
+    if (caracteres >= 335) {
+        contador.classList.add("peligro");
+    } else if (caracteres >= 290) {
+        contador.classList.add("advertencia");
+    }
+});
+
+const enviar = document.getElementById("enviar");
+const mensajeError = document.getElementById("mensaje-error");
+
+enviar.addEventListener("click", async function() {
+    const texto = confesion.value.trim();
+    const caracteres = texto.length;
+
+    if (caracteres < 10) {
+        mensajeError.textContent = "Quien oculta su actuar ante Dios, no tendrá lugar en la tierra prometida. —Salomón 4:15";
+        return;
+    }
+
+    mensajeError.textContent = "Procesando su confesión...";
+
+    const { error } = await supabaseClient
+        .from("confesiones")
+        .insert({
+            contenido: texto
+        });
+
+    if (error) {
+        console.error("Error al enviar la confesión:", error);
+        mensajeError.textContent = "Su confesión no pudo ser recibida. Inténtelo nuevamente.";
+        return;
+    }
+
+    window.location.href = "confesionrecibida1.html";
+});
+</script>
+</body>
+</html>
